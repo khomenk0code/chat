@@ -1,15 +1,20 @@
 import {NextPage} from "next";
-import {signIn, useSession} from "next-auth/react";
+import {signIn, signOut, useSession} from "next-auth/react";
 
 
 const Home: NextPage = () => {
-    const { data} = useSession();
+    const {data} = useSession();
 
-    console.log('data',data)
+    console.log('data', data)
 
-    return(
+    return (
         <>
-            <button onClick={() => signIn('google')}>Sign In</button>
+            {data?.user ? (
+                 <button onClick={() => signOut()}>Sign Out</button>
+            ) : (
+                <button onClick={() => signIn('google')}>Sign In</button>
+            )}
+            {data?.user?.name}
         </>
     )
 
