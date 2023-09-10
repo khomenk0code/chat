@@ -1,15 +1,18 @@
-// npm install @apollo/server express graphql cors body-parser
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import {ApolloServer} from '@apollo/server';
+import {expressMiddleware} from '@apollo/server/express4';
+import {ApolloServerPluginDrainHttpServer} from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
-import http from 'http';
+import { createServer } from "http";
 import cors from 'cors';
-import bodyParser from 'body-parser';
+import pkg from 'body-parser';
+const { json } = pkg;
+
 import typeDefs from "./graphql/type-defs";
 import resolvers from "./graphql/resolvers";
 import {makeExecutableSchema} from "@graphql-tools/schema";
 import * as dotenv from 'dotenv'
+import {getSession} from "next-auth/react";
+
 
 interface MyContext {
     token?: string;
@@ -19,7 +22,7 @@ const main = async () => {
 
     dotenv.config()
     const app = express();
-    const httpServer = http.createServer(app);
+    const httpServer = createServer(app);
 
     const schema = makeExecutableSchema({
         typeDefs,
@@ -28,7 +31,9 @@ const main = async () => {
 
     const server = new ApolloServer<MyContext>({
         schema,
+        csrfPrevention: true,
         plugins: [ApolloServerPluginDrainHttpServer({httpServer})],
+
     });
 
     await server.start();
@@ -39,16 +44,19 @@ const main = async () => {
     }
 
     app.use(
-        '/',
+        "/graphql",
         cors<cors.CorsRequest>(corsOptions),
-        bodyParser.json(),
+        json(),
         expressMiddleware(server, {
-            context: async ({req}) => ({token: req.headers.token}),
-        }),
+            context: async ({req}) => {
+                const session = await getSession({req});
+                return {session: session};
+            },
+        })
     );
 
 
     await new Promise<void>((resolve) => httpServer.listen({port: 4000}, resolve));
     console.log(`🚀 Server ready at http://localhost:4000`);
 };
-    main().catch((err) => console.log(err));
+main().catch((err) => console.log(err));

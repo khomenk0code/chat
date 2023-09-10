@@ -51,8 +51,11 @@ const Auth: React.FC<IAuthProps> = ({session, reloadSession}) => {
                     <>
                         <Text fontSize="3xl">MessengerQL</Text>
                         <Button
-                            onClick={() => signIn('google')} leftIcon={
-                            <Image alt="https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg" height='20px' src='/images/googlelogo.png'/>}
+                            onClick={() => signIn('google')}
+                            leftIcon={
+                            <Image alt="https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                                   height='20px' src='/images/googlelogo.png'/>}
+
                         >Continue with Google</Button>
                     </>
                 )}
