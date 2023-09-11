@@ -12,6 +12,7 @@ import resolvers from "./graphql/resolvers";
 import {makeExecutableSchema} from "@graphql-tools/schema";
 import * as dotenv from 'dotenv'
 import {getSession} from "next-auth/react";
+import {GraphQLContext} from "./utils/types";
 
 
 interface MyContext {
@@ -21,14 +22,20 @@ interface MyContext {
 const main = async () => {
 
     dotenv.config()
-    const app = express();
-    const httpServer = createServer(app);
 
     const schema = makeExecutableSchema({
         typeDefs,
         resolvers,
     })
 
+    const app = express();
+    const httpServer = createServer(app);
+
+
+    const corsOptions = {
+        origin: process.env.CLIENT_ORIGIN,
+        credentials: true
+    }
     const server = new ApolloServer<MyContext>({
         schema,
         csrfPrevention: true,
@@ -38,17 +45,13 @@ const main = async () => {
 
     await server.start();
 
-    const corsOptions = {
-        origin: process.env.CLIENT_ORIGIN,
-        credentials: true
-    }
 
     app.use(
         "/graphql",
         cors<cors.CorsRequest>(corsOptions),
         json(),
         expressMiddleware(server, {
-            context: async ({ req }): Promise<any> => {
+            context: async ({ req }): Promise<GraphQLContext> => {
                 const session = await getSession({ req });
                 console.log('CONTEXT SESSION', session)
 
