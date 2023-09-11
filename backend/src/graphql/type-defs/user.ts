@@ -1,23 +1,25 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-const userTypeDefs = gql`
+const typeDefs = gql`
+    scalar Date
+
     type User {
         id: String
         username: String
     }
-    
+
     type Query {
-        searchUsers(username: String): [User]
+        searchUsers(username: String!): [User]
     }
-    
+
     type Mutation {
-        createUsername(username: String): CreateUsernameResponse
+        createUsername(username: String!): CreateUsernameResponse
     }
-    
+
     type CreateUsernameResponse {
         success: Boolean
         error: String
     }
 `;
 
-export default userTypeDefs;
+export default typeDefs;

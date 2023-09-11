@@ -48,8 +48,10 @@ const main = async () => {
         cors<cors.CorsRequest>(corsOptions),
         json(),
         expressMiddleware(server, {
-            context: async ({req}) => {
-                const session = await getSession({req});
+            context: async ({ req }): Promise<any> => {
+                const session = await getSession({ req });
+                console.log('CONTEXT SESSION', session)
+
                 return {session: session};
             },
         })
