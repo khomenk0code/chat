@@ -9,11 +9,11 @@ import {client} from "@/graphql/apollo-client";
 function App({Component, pageProps: {session, ...pageProps}}: AppProps) {
     return (
         <ApolloProvider client={client}>
-            <ChakraProvider theme={theme}>
-                <SessionProvider session={session}>
+            <SessionProvider session={session}>
+                <ChakraProvider theme={theme}>
                     <Component {...pageProps} />
-                </SessionProvider>
-            </ChakraProvider>
+                </ChakraProvider>
+            </SessionProvider>
         </ApolloProvider>
     );
 }

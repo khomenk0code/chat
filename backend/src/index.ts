@@ -13,6 +13,7 @@ import {makeExecutableSchema} from "@graphql-tools/schema";
 import * as dotenv from 'dotenv'
 import {getSession} from "next-auth/react";
 import {GraphQLContext} from "./utils/types";
+import {session} from "next-auth/core/routes";
 
 
 interface MyContext {
@@ -52,6 +53,7 @@ const main = async () => {
         json(),
         expressMiddleware(server, {
             context: async ({ req }): Promise<GraphQLContext> => {
+                const { query, method, body } = req;
                 const session = await getSession({ req });
                 console.log('CONTEXT SESSION', session)
 
@@ -59,6 +61,10 @@ const main = async () => {
             },
         })
     );
+
+
+
+
 
 
     await new Promise<void>((resolve) => httpServer.listen({port: 4000}, resolve));

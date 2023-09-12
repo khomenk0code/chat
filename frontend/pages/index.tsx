@@ -1,42 +1,37 @@
-import {NextPage, NextPageContext} from "next";
-import {getSession, useSession} from "next-auth/react";
-import {Box} from "@chakra-ui/react";
-import Auth from "@/components/auth/auth";
+import { Box } from "@chakra-ui/react";
+import type { NextPage, NextPageContext } from "next";
+import { getSession, useSession } from "next-auth/react";
 import Chat from "@/components/chat/chat";
+import Auth from "@/components/auth/auth";
+
 
 const Home: NextPage = () => {
-    const {data: session} = useSession();
+    const { data: session } = useSession();
 
-    console.log('session', session)
 
     const reloadSession = () => {};
 
+
     return (
-       <Box>
-           {session?.user.username ? <Chat/> : <Auth session={session} reloadSession={reloadSession}/>}
-       </Box>
-    )
+        <Box>
+            {session && session?.user?.username ? (
+                <Chat  />
+            ) : (
+                <Auth session={session} reloadSession={reloadSession} />
+            )}
+        </Box>
+    );
 };
 
-export async function getServerSideProps(context: NextPageContext) {
-    const session = await getSession(context)
 
-    // if (!session) {
-    //     return {
-    //         redirect: {
-    //             destination: '/',
-    //             permanent: false,
-    //         },
-    //     }
-    // }
+export async function getServerSideProps(ctx: NextPageContext) {
+    const session = await getSession(ctx);
 
     return {
         props: {
             session,
-        }
-    }
+        },
+    };
 }
 
-
 export default Home;
-
