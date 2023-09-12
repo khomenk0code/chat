@@ -2,18 +2,17 @@ import {ApolloServer} from '@apollo/server';
 import {expressMiddleware} from '@apollo/server/express4';
 import {ApolloServerPluginDrainHttpServer} from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
-import { createServer } from "http";
+import {createServer} from "http";
 import cors from 'cors';
 import pkg from 'body-parser';
-const { json } = pkg;
-
 import typeDefs from "./graphql/type-defs";
 import resolvers from "./graphql/resolvers";
 import {makeExecutableSchema} from "@graphql-tools/schema";
 import * as dotenv from 'dotenv'
 import {getSession} from "next-auth/react";
 import {GraphQLContext} from "./utils/types";
-import {session} from "next-auth/core/routes";
+
+const { json } = pkg;
 
 
 interface MyContext {
@@ -53,7 +52,6 @@ const main = async () => {
         json(),
         expressMiddleware(server, {
             context: async ({ req }): Promise<GraphQLContext> => {
-                const { query, method, body } = req;
                 const session = await getSession({ req });
                 console.log('CONTEXT SESSION', session)
 
